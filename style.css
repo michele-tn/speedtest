@@ -80,7 +80,7 @@ body {
   background: var(--bg-primary);
   background: var(--body-bg);
   color: var(--text-primary);
-  min-width: 24rem;
+  min-width: 16rem;
   line-height: 1.6;
   -webkit-transition: background-color 0.3s ease, color 0.3s ease;
   transition: background-color 0.3s ease, color 0.3s ease;
