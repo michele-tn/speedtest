@@ -660,7 +660,6 @@ html.no-js .modal#disabledJavascript,
   left: 1rem;
   right: 1rem;
   background: var(--bg-card);
-  background: var(--bg-card-translucent);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem;
   box-shadow: var(--shadow-lg);
