@@ -2,26 +2,26 @@
 
 const CACHE_NAME = "broadband-speedtest-v1"
 const STATIC_CACHE_URLS = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/app.js",
-  "/manifest.json",
-  "/favicon.ico",
-  "/favicon-16x16.png",
-  "/favicon-32x32.png",
-  "/favicon-32x32.png",
-  "/apple-touch-icon.png",
-  "/android-chrome-192x192.png",
-  "/android-chrome-512x512.png",
-  "/icon_72x72.png",
-  "/icon_96x96.png",
-  "/icon_128x128.png",
-  "/icon_144x144.png",
-  "/icon_152x152.png",
-  "/icon_192x192.png",
-  "/icon_384x384.png",
-  "/icon_512x512.png",
+  "./",
+  "./index.html",
+  "./style.css",
+  "./app.js",
+  "./manifest.json",
+  "./favicon.ico",
+  "./favicon-16x16.png",
+  "./favicon-32x32.png",
+  "./favicon-32x32.png",
+  "./apple-touch-icon.png",
+  "./android-chrome-192x192.png",
+  "./android-chrome-512x512.png",
+  "./icon_72x72.png",
+  "./icon_96x96.png",
+  "./icon_128x128.png",
+  "./icon_144x144.png",
+  "./icon_152x152.png",
+  "./icon_192x192.png",
+  "./icon_384x384.png",
+  "./icon_512x512.png",
   "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
   //"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
 ]
@@ -75,7 +75,7 @@ self.addEventListener("fetch", (event) => {
       .catch(() => {
         // Return offline page for navigation requests
         if (event.request.destination === "document") {
-          return caches.match("/index.html")
+          return caches.match("./index.html")
         }
       }),
   )
@@ -113,8 +113,8 @@ async function doBackgroundSync() {
 self.addEventListener("push", (event) => {
   const options = {
     body: event.data ? event.data.text() : "Speed test completed!",
-    icon: "/icon_192x192.png",
-    badge: "/icon_72x72.png",
+    icon: "./icon_192x192.png",
+    badge: "./icon_72x72.png",
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -124,12 +124,12 @@ self.addEventListener("push", (event) => {
       {
         action: "explore",
         title: "View Results",
-        icon: "/icon_192x192.png",
+        icon: "./icon_192x192.png",
       },
       {
         action: "close",
         title: "Close",
-        icon: "/icon_192x192.png",
+        icon: "./icon_192x192.png",
       },
     ],
   }
@@ -140,9 +140,8 @@ self.addEventListener("push", (event) => {
 // Notification click handling
 self.addEventListener("notificationclick", (event) => {
   event.notification.close()
-
   if (event.action === "explore") {
-    event.waitUntil(clients.openWindow("/"))
+    event.waitUntil(clients.openWindow("./"))
   }
 })
 
