@@ -1,6 +1,6 @@
 # 🌐 Broadband SpeedTest - Internet Speed Test PWA
 
-[![Broadband Speed Test Screenshot](/icon_96x96.png)](https://broadband-speedtest.github.io)
+[![Broadband Speed Test](/icon_96x96.png)](https://broadband-speedtest.github.io)
 
 **Broadband SpeedTest** is a blazing-fast Progressive Web App (PWA) that lets users test their internet speed directly from their browser — without downloading anything!
 

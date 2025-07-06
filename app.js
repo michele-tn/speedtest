@@ -91,7 +91,8 @@ class SpeedTestApp {
   setupEventListeners() {
     // Test button
     this.doms.startTestBtn.addEventListener("click", () => {
-      if(this.online === true){
+      if(this.online === true || navigator.onLine === true){
+		    this.online === true
         if (!this.isTestRunning) {
           this.startSpeedTest()
         }else{
@@ -247,7 +248,7 @@ class SpeedTestApp {
     const ctx = this.ctx
     const centerX = canvas.width / 2
     const centerY = canvas.height / 2
-    const radius = 120
+    const radius = 140
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -255,31 +256,45 @@ class SpeedTestApp {
     // Draw background circle
     ctx.beginPath()
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--bg-card")
+    //ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--bg-card")
+    ctx.fillStyle = '#1e293b';
     ctx.fill()
     ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--border-color")
     ctx.lineWidth = 2
     ctx.stroke()
+    
+    const maxSpeed = 1000
+    const normalizedSpeed = Math.min(speed / maxSpeed, 1)
+    const startAngle = 0.75 * Math.PI; // 135 degrees
+    const endAngle = 2.25 * Math.PI;   // 405 degrees (1.5 PI sweep from start)
+    const totalAngle = endAngle - startAngle;
+    const currentAngle = startAngle + normalizedSpeed * totalAngle;
+    //const endAngle = -Math.PI + normalizedSpeed * Math.PI
 
     // Draw speed arc background
     ctx.beginPath()
-    ctx.arc(centerX, centerY, radius - 20, -Math.PI, 0)
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--bg-tertiary")
+    //ctx.arc(centerX, centerY, radius - 20, -Math.PI, 0)
+    ctx.arc(centerX, centerY, radius - 20, startAngle, endAngle);
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--arc-bg")
     ctx.lineWidth = 20
+    ctx.lineCap = "round"
     ctx.stroke()
 
     // Draw speed arc
-    const maxSpeed = 1000
-    const normalizedSpeed = Math.min(speed / maxSpeed, 1)
-    const endAngle = -Math.PI + normalizedSpeed * Math.PI
-
     ctx.beginPath()
-    ctx.arc(centerX, centerY, radius - 20, -Math.PI, endAngle)
+    //ctx.arc(centerX, centerY, radius - 20, -Math.PI, endAngle)
+    ctx.arc(centerX, centerY, radius - 20, startAngle, currentAngle);
 
     // Create gradient
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0)
-    gradient.addColorStop(0, "#10b981")
-    gradient.addColorStop(0.5, "#06b6d4")
+    gradient.addColorStop(0, "#df0000")
+    gradient.addColorStop(0, "#df0000")
+    gradient.addColorStop(0.1, "#fa5117")
+    gradient.addColorStop(0.3, "#e7d593")
+    gradient.addColorStop(0.5, "#b8ba42")
+    gradient.addColorStop(0.6, "#76a51d")
+    gradient.addColorStop(0.7, "#158132")
+    gradient.addColorStop(1, "#6366f1")
     gradient.addColorStop(1, "#6366f1")
 
     ctx.strokeStyle = gradient
@@ -288,8 +303,9 @@ class SpeedTestApp {
     ctx.stroke()
 
     // Draw speed markers
-    for (let i = 0; i <= 10; i++) {
-      const angle = -Math.PI + (i / 10) * Math.PI
+    const numMarks = 10;
+    for (let i = 0; i <= numMarks; i++) {
+      const angle = startAngle + (i / 10) * totalAngle
       const x1 = centerX + (radius - 35) * Math.cos(angle)
       const y1 = centerY + (radius - 35) * Math.sin(angle)
       const x2 = centerX + (radius - 45) * Math.cos(angle)
@@ -298,7 +314,7 @@ class SpeedTestApp {
       ctx.beginPath()
       ctx.moveTo(x1, y1)
       ctx.lineTo(x2, y2)
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--text-tertiary")
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--spd-marker")
       ctx.lineWidth = 2
       ctx.stroke()
 
@@ -311,18 +327,18 @@ class SpeedTestApp {
         ctx.font = "12px Inter"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
-        ctx.fillText((i * (maxSpeed/10)).toString(), labelX, labelY)
+        ctx.fillText((i * (maxSpeed/numMarks)).toString(), labelX, labelY)
       }
     }
 
     // Draw needle
-    const needleAngle = -Math.PI + normalizedSpeed * Math.PI
-    const needleLength = radius - 60
+    const needleAngle = startAngle + normalizedSpeed * totalAngle
+    const needleLength = radius - 70
 
     ctx.beginPath()
     ctx.moveTo(centerX, centerY)
     ctx.lineTo(centerX + needleLength * Math.cos(needleAngle), centerY + needleLength * Math.sin(needleAngle))
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--primary-color")
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--spd-needle")
     ctx.lineWidth = 3
     ctx.lineCap = "round"
     ctx.stroke()
@@ -330,7 +346,7 @@ class SpeedTestApp {
     // Draw center circle
     ctx.beginPath()
     ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI)
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--primary-color")
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--spd-center-circle")
     ctx.fill()
   }
 
@@ -888,7 +904,7 @@ class SpeedTestApp {
   }
 
   async copyResult() {
-    const resultText = `SpeedTest Pro Results:
+    const resultText = `SpeedTest Results:
 Download: ${this.testResults.download} Mbps
 Upload: ${this.testResults.upload} Mbps
 Ping: ${this.testResults.ping} ms
@@ -917,7 +933,7 @@ ${this.testResults.location ? `Location: ${this.testResults.location}` : ""}`
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "SpeedTest Pro Results",
+          title: "SpeedTest Results",
           text: resultText,
           url: window.location.href,
         })
@@ -996,9 +1012,9 @@ ${this.testResults.location ? `Location: ${this.testResults.location}` : ""}`
 
     // Browser notification
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("SpeedTest Pro", {
+      new Notification("Broadband SpeedTest", {
         body: message,
-        icon: "/icon-192.png",
+        icon: "/icon_192x192.png",
       })
     }
   }
@@ -1009,4 +1025,5 @@ ${this.testResults.location ? `Location: ${this.testResults.location}` : ""}`
 }
 
 window.SpeedTestApp = SpeedTestApp
+
 })();
