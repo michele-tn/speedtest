@@ -96,12 +96,21 @@ class SpeedTestApp {
         if (!this.isTestRunning) {
           this.startSpeedTest()
         }else{
+          this.stopSpeedTest()
           if(this.controller){
             this.controller.abort();
           }
+          this.isTestRunning = false
         }
       }else{
         testMessage.innerHTML = `<p style="color:red; color: var(--error-color)">You are offline! Be online & start test.</p>`
+        if (this.isTestRunning) {
+          this.stopSpeedTest()
+          if(this.controller){
+            this.controller.abort();
+          }
+          this.isTestRunning = false
+        }
       }
     })
 
@@ -400,6 +409,7 @@ class SpeedTestApp {
     startTestBtnSpin.classList.add('hidden')
     //testStatus.textContent = 'Ready to test'
     testMessage.textContent = 'Ready to test'
+    this.drawSpeedometer(0)
   }
 
   async startSpeedTest() {
@@ -425,10 +435,9 @@ class SpeedTestApp {
       if(!this.isTestRunning){ return; }
       await this.testUpload()
       if(!this.isTestRunning){ return; }
-
-      this.calculateJitter()
+      await this.calculateJitter()
       if(!this.isTestRunning){ return; }
-      this.saveTestResult()
+      await this.saveTestResult()
       if(!this.isTestRunning){ return; }
       this.showShareModal()
       this.showNotification("Speed test completed!")
@@ -443,6 +452,8 @@ class SpeedTestApp {
       startTestBtnText.textContent = 'Start Test'
       startTestBtnPlay.classList.remove('hidden')
       startTestBtnSpin.classList.add('hidden')
+      setTimeout(function () {this.drawSpeedometer(0)},1000)
+      this.drawSpeedometer(0)
     }
   }
 
@@ -641,7 +652,7 @@ class SpeedTestApp {
     this.updateProgress("Upload test completed", 95)
   }
 
-  calculateJitter() {
+  async calculateJitter() {
     if (this.pingResults.length < 2) {
       this.testResults.jitter = 0
       return
@@ -757,7 +768,7 @@ class SpeedTestApp {
     }
   }
 
-  saveTestResult() {
+  async saveTestResult() {
     const results = this.getStoredResults()
     results.unshift({
       ...this.testResults,
