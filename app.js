@@ -452,7 +452,7 @@ class SpeedTestApp {
       startTestBtnText.textContent = 'Start Test'
       startTestBtnPlay.classList.remove('hidden')
       startTestBtnSpin.classList.add('hidden')
-      setTimeout(function () {this.drawSpeedometer(0)},1000)
+      setTimeout(() => {this.drawSpeedometer(0)},1000)
       this.drawSpeedometer(0)
     }
   }
@@ -912,6 +912,7 @@ class SpeedTestApp {
 
   hideShareModal() {
     this.doms.shareModal.classList.remove("active")
+    this.drawSpeedometer(0)
   }
 
   async copyResult() {
