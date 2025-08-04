@@ -130,7 +130,11 @@ a{
   justify-content: space-between;
   -ms-flex-align: center;
   align-items: center;
-  padding: 1rem 0;
+  padding: 1rem 0 1rem 0;
+}
+
+.footer-content {
+  padding-bottom: 0;
 }
 
 .footer{
@@ -538,7 +542,7 @@ html.no-js .modal#disabledJavascript,
   justify-content: space-between;
   -ms-flex-align: center;
   align-items: center;
-  padding: 1.5rem;
+  padding: 0.5rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -574,7 +578,7 @@ html.no-js .modal#disabledJavascript,
   display: -ms-flexbox;
   display: flex;
   gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   border-top: 1px solid var(--border-color);
   -ms-flex-pack: end;
   justify-content: flex-end;
@@ -632,7 +636,7 @@ html.no-js .modal#disabledJavascript,
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .history-date {

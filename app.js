@@ -65,6 +65,10 @@ class SpeedTestApp {
     this.location = null;
     this.controller = null;
 
+    this.winFocused = true;
+    this.darkThemeDetector = typeof window.matchMedia != 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)') : {matches: false, addEventListener: function(e,c,u){}};
+    this.darkTheme = this.darkThemeDetector.matches
+
     this.init()
   }
 
@@ -171,8 +175,14 @@ class SpeedTestApp {
       }
     })
 
-    window.addEventListener('online', (e) => {
+    window.addEventListener('online', async (e) => {
       this.online = true
+      const ip = this.ip
+      await this.loadIpInfo()
+      if(ip != this.ip){
+        await this.getIPInfo()
+        await this.getLocationInfo()
+      }
     });
 
     window.addEventListener('offline', (e) => {
@@ -194,6 +204,22 @@ class SpeedTestApp {
       }
     });
 
+    window.addEventListener('blur', (e) => {
+      this.winFocused = false;
+    });
+
+    window.addEventListener('focus', (e) => {
+      this.winFocused = true;
+    });
+
+    this.darkThemeDetector.addEventListener('change', (e) => {
+      this.darkTheme = e.matches;
+      const savedTheme = localStorage.getItem("theme");
+      if(!savedTheme){
+        document.documentElement.setAttribute("data-theme",this.darkTheme ? "dark" : "light")
+        this.updateThemeIcon(this.darkTheme ? "dark" : "light")
+      }
+    });
     testMessage.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Ready to test</p>'
   }
 
@@ -225,18 +251,19 @@ class SpeedTestApp {
   }
 
   setupTheme() {
-    const savedTheme = localStorage.getItem("theme") || "light"
+    const savedTheme = localStorage.getItem("theme") || (this.darkTheme ? "dark" : "light")
     document.documentElement.setAttribute("data-theme", savedTheme)
     this.updateThemeIcon(savedTheme)
+    this.initSpeedometer()
   }
 
   toggleTheme() {
     const currentTheme = document.documentElement.getAttribute("data-theme")
     const newTheme = currentTheme === "dark" ? "light" : "dark"
-
     document.documentElement.setAttribute("data-theme", newTheme)
     localStorage.setItem("theme", newTheme)
     this.updateThemeIcon(newTheme)
+    this.initSpeedometer()
   }
 
   updateThemeIcon(theme) {
@@ -429,11 +456,12 @@ class SpeedTestApp {
 
     try {
       // Test sequence
-      await this.testPing()
-      if(!this.isTestRunning){ return; }
       await this.testDownload()
       if(!this.isTestRunning){ return; }
       await this.testUpload()
+      if(!this.isTestRunning){ return; }
+      this.updateSpeedometer(this.testResults.download)
+      await this.testPing()
       if(!this.isTestRunning){ return; }
       await this.calculateJitter()
       if(!this.isTestRunning){ return; }
@@ -458,7 +486,7 @@ class SpeedTestApp {
   }
 
   async testPing() {
-    this.updateProgress("Testing ping...", 10)
+    this.updateProgress("Testing ping...", 55)
     this.pingResults = []
 
     const testUrls = [
@@ -489,18 +517,18 @@ class SpeedTestApp {
         const pingTime = endTime - startTime
         this.pingResults.push(pingTime)
       }
-
+      this.updateProgress("Calculating ping...", 75)
       await this.delay(200)
     }
 
     const avgPing = this.pingResults.reduce((a, b) => a + b, 0) / this.pingResults.length
     this.testResults.ping = Math.round(avgPing)
     this.updateMetric("pingValue", this.testResults.ping)
-    this.updateProgress("Ping test completed", 25)
+    this.updateProgress("Ping test completed", 95)
   }
 
   async testDownload() {
-    this.updateProgress("Testing download speed...", 30)
+    this.updateProgress("Testing download speed...", 10)
 
     // Use multiple test files for more accurate results
     const testFiles = [
@@ -541,7 +569,7 @@ class SpeedTestApp {
             const currentSpeed = (receivedBytes * 8) / (elapsed * 1000000) // Mbps
             this.updateSpeedometer(currentSpeed)
             this.updateMetric("downloadSpeed", currentSpeed.toFixed(2))
-            this.updateProgress(`Download: ${currentSpeed.toFixed(1)} Mbps`, 30 + completedTests * 20)
+            this.updateProgress(`Download: ${currentSpeed.toFixed(1)} Mbps`, 10 + completedTests * 20)
           }
 
           // Limit test duration
@@ -573,7 +601,7 @@ class SpeedTestApp {
 
     this.updateMetric("downloadSpeed", this.testResults.download)
     this.updateSpeedometer(this.testResults.download)
-    this.updateProgress("Download test completed", 70)
+    this.updateProgress("Download test completed", 25)
   }
 
   async fallbackDownloadTest() {
@@ -601,7 +629,7 @@ class SpeedTestApp {
   }
 
   async testUpload() {
-    this.updateProgress("Testing upload speed...", 75)
+    this.updateProgress("Testing upload speed...", 30)
 
     // Create test data
     const testSizes = [1024 * 1024, 2 * 1024 * 1024] // 1MB, 2MB
@@ -635,7 +663,7 @@ class SpeedTestApp {
 
           this.updateSpeedometer(speed)
           this.updateMetric("uploadSpeed", speed.toFixed(2))
-          this.updateProgress(`Upload: ${speed.toFixed(1)} Mbps`, 85)
+          this.updateProgress(`Upload: ${speed.toFixed(1)} Mbps`, 40)
         }
       } catch (error) {
         console.warn("Upload test failed:", error)
@@ -649,7 +677,7 @@ class SpeedTestApp {
 
     this.testResults.upload = Math.round(bestSpeed * 100) / 100
     this.updateMetric("uploadSpeed", this.testResults.upload)
-    this.updateProgress("Upload test completed", 95)
+    this.updateProgress("Upload test completed", 50)
   }
 
   async calculateJitter() {
@@ -665,6 +693,7 @@ class SpeedTestApp {
 
     this.testResults.jitter = Math.round(standardDeviation * 100) / 100
     this.updateMetric("jitterValue", this.testResults.jitter)
+    this.updateProgress("Jitter completed", 100)
   }
 
   updateSpeedometer(speed) {
@@ -1023,10 +1052,10 @@ ${this.testResults.location ? `Location: ${this.testResults.location}` : ""}`
     }, 3000)
 
     // Browser notification
-    if ("Notification" in window && Notification.permission === "granted") {
+    if (!this.winFocused && "Notification" in window && Notification.permission === "granted") {
       new Notification("Broadband SpeedTest", {
         body: message,
-        icon: "/icon_192x192.png",
+        icon: "./icon_192x192.png",
       })
     }
   }
