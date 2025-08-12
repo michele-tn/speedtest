@@ -1,4 +1,5 @@
 # 🌐 Broadband SpeedTest - Internet Speed Test PWA
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/blob/main/LICENSE) &nbsp;&nbsp; [![GitHub stars](https://img.shields.io/github/stars/broadband-speedtest/broadband-speedtest.github.io?style=social)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/stargazers) &nbsp;&nbsp; [![GitHub forks](https://img.shields.io/github/forks/broadband-speedtest/broadband-speedtest.github.io?style=social)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/network/members) &nbsp;&nbsp; [![GitHub watchers](https://img.shields.io/github/watchers/broadband-speedtest/broadband-speedtest.github.io?style=social)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/watchers) &nbsp;&nbsp; [![GitHub followers](https://img.shields.io/github/followers/broadband-speedtest?style=social)](https://github.com/broadband-speedtest?tab=followers)
 
 [![Broadband Speed Test](/icon_96x96.png)](https://broadband-speedtest.github.io)
 
@@ -81,19 +82,14 @@ Meta Description: Test your internet speed including download, upload, ping, and
 ---
 
 ### 🛡️ License
-This project is open-source and available under the [MIT License](https://chatgpt.com/LICENSE).
+This project is open-source and available under the [MIT License](https://mit-license.org/).
 
 ⭐ Don't forget to star this repo if you like it!
 
 ---
 
-### ✅ More Tips
+## ⭐ Show Your Support
 
-* Add this to your GitHub repo’s root as `README.md`
-* Use [GitHub Topics](https://github.com/topics) like `internet-speed`, `speedtest`, `pwa`, `offline-first`, `javascript`, `webapp`
-* Submit to product directories like [Product Hunt](https://www.producthunt.com/) or [Dev.to](https://dev.to/)
-* Deploy live (Netlify, Vercel, Firebase Hosting) and link it in the README.
+If you find this extension useful, please consider giving it a star on GitHub! Your support helps motivate further development and improvements.
 
----
-
-Let me know if you'd like a **GitHub Pages deployment URL**, or a **badge layout** for downloads, build status, etc.
+[![GitHub stars](https://img.shields.io/github/stars/broadband-speedtest/broadband-speedtest.github.io?style=for-the-badge)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/stargazers)
