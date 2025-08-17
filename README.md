@@ -93,3 +93,4 @@ This project is open-source and available under the [MIT License](https://mit-li
 If you find this extension useful, please consider giving it a star on GitHub! Your support helps motivate further development and improvements.
 
 [![GitHub stars](https://img.shields.io/github/stars/broadband-speedtest/broadband-speedtest.github.io?style=for-the-badge)](https://github.com/broadband-speedtest/broadband-speedtest.github.io/stargazers)
+
