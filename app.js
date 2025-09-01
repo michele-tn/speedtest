@@ -533,7 +533,8 @@
 
       // Use multiple test files for more accurate results
       const testFiles = [
-        "https://speed.cloudflare.com/__down?bytes=25000000", // 25MB
+        //"https://speed.cloudflare.com/__down?bytes=25000000", // 25MB
+        "https://speed.cloudflare.com/__down?bytes=100000000", // 100MB
         "https://proof.ovh.net/files/10Mb.dat",
         "https://ash-speed.hetzner.com/10MB.bin",
       ]
